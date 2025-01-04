@@ -1,0 +1,10 @@
+CSS
+
+locating elements by id and value
+syntax [@attributname='value']
+ex :-
+
+<span class="title" data-test="title">sd</span>
+[@class='title']
+[@data-test="title"]
+
