@@ -1,35 +1,34 @@
 package com.pragmatic.selenium;
-import org.openqa.selenium.*;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
-import java.time.Duration;
+public class CrossBrowserTest  {
 
-public class HelloSeleTest {
-    private WebDriver driver;  //   class level declaration
+
+    private WebDriver driver;  // class level declaration in this browser mode all webdriver inits and url navigation will be done in tests itself
 
     @BeforeMethod //runs before each method
     public void init() {
-        driver = new ChromeDriver();  // removed WebDriver declaration since it's already declared at class level
-        driver.manage().window().maximize();
-        driver.navigate().to("https://www.saucedemo.com/");
+       /* driver = new ChromeDriver();  // removed WebDriver declaration since it's already declared at class level
+        driver.manage().window().maximize();*/
     }
 
     @AfterMethod
     public void clean() {
-        if (driver != null) {  // added null check for safety
+       // added null check for safety
             driver.quit();
-        }
+
     }
 
    /* @Test
@@ -69,27 +68,15 @@ public class HelloSeleTest {
             driver.findElement(By.xpath("//button[@data-test=\"error-button\"]")).click();
         }*/
 
-//Locked user
-        @Test(dataProvider = "login_credentials"  )
-        public void testLockedUser(String userName,String pwd,String msg)
-        {
-            SoftAssert softAssert = new SoftAssert();
-            driver.navigate().to("https://www.saucedemo.com/");
-            clearTextbox(driver, driver.findElement(By.id("user-name")));
-            driver.findElement(By.id("user-name")).sendKeys(userName);
-            clearTextbox(driver, driver.findElement(By.id("password")));
-            driver.findElement(By.id("password")).sendKeys(pwd);
-            driver.findElement(By.xpath("//input[@type='submit']")).click();
-            softAssert.assertEquals(driver.findElement(By.xpath("//h3[@data-test='error']")).getText(),
-                    msg);
-            driver.findElement(By.xpath("//button[@data-test=\"error-button\"]")).click();
-        }
-   /* @Test(dataProvider = "login_credentials"  ,dataProviderClass = DataProviderClass.class)*/
-   @Test(dataProvider = "login_credentials")
-    public void testLockedUserclass(String userName,String pwd,String msg)
+    //Locked user
+    @Test(dataProvider = "login_credentials"  )
+    public void testLockedUser(String userName,String pwd,String msg)
     {
-        SoftAssert softAssert = new SoftAssert();
+        driver=new ChromeDriver();
+        driver.manage().window().maximize();
         driver.navigate().to("https://www.saucedemo.com/");
+
+        SoftAssert softAssert = new SoftAssert();
         clearTextbox(driver, driver.findElement(By.id("user-name")));
         driver.findElement(By.id("user-name")).sendKeys(userName);
         clearTextbox(driver, driver.findElement(By.id("password")));
@@ -99,7 +86,24 @@ public class HelloSeleTest {
                 msg);
         driver.findElement(By.xpath("//button[@data-test=\"error-button\"]")).click();
     }
-// Test 4: Valid login
+    @Test(dataProvider = "login_credentials"  ,dataProviderClass = DataProviderClass.class)
+    public void testLockedUserclass(String userName,String pwd,String msg)
+    {
+        driver=new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.navigate().to("https://www.saucedemo.com/");
+
+        SoftAssert softAssert = new SoftAssert();;
+        clearTextbox(driver, driver.findElement(By.id("user-name")));
+        driver.findElement(By.id("user-name")).sendKeys(userName);
+        clearTextbox(driver, driver.findElement(By.id("password")));
+        driver.findElement(By.id("password")).sendKeys(pwd);
+        driver.findElement(By.xpath("//input[@type='submit']")).click();
+        softAssert.assertEquals(driver.findElement(By.xpath("//h3[@data-test='error']")).getText(),
+                msg);
+        driver.findElement(By.xpath("//button[@data-test=\"error-button\"]")).click();
+    }
+    // Test 4: Valid login
       /*  @Test()
         public void testLogins()
         {SoftAssert softAssert = new SoftAssert();
@@ -124,7 +128,7 @@ public class HelloSeleTest {
     }
 
 
-    public void clearTextbox(WebDriver driver,WebElement textbox) {
+    public void clearTextbox(WebDriver driver, WebElement textbox) {
         try {
             Actions actions = new Actions(driver);
             actions.doubleClick(textbox).sendKeys("").build().perform();
@@ -135,5 +139,8 @@ public class HelloSeleTest {
             System.out.println("Error clearing textbox: " + e.getMessage());
         }
     }
+
+
+
 
 }
